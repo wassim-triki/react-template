@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createPost, deletePost, fetchPosts } from '../services/posts';
+import AddPostForm from '../components/AddPostForm';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -12,12 +13,7 @@ const Posts = () => {
     getPosts();
   }, []);
 
-  const handleAddPost = async () => {
-    const newPost = {
-      title: 'Nouveau post',
-      content: 'Contenu du nouveau post',
-    };
-    await createPost(newPost);
+  const handlePostAdded = async () => {
     const data = await fetchPosts();
     setPosts(data);
   };
@@ -31,7 +27,7 @@ const Posts = () => {
   return (
     <div>
       <h1>Posts</h1>
-      <button onClick={handleAddPost}>Ajouter un post</button>
+      <AddPostForm onPostAdded={handlePostAdded} />
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
