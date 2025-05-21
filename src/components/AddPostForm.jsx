@@ -12,19 +12,17 @@ const postSchema = z.object({
     .min(10, 'Le contenu doit contenir au moins 10 caractères'),
 });
 
-const AddPostForm = () => {
-  const addPost = usePostStore((state) => state.addPost);
+export default function AddPostForm() {
+  const addPost = usePostStore((s) => s.addPost);
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(postSchema),
-  });
+  } = useForm({ resolver: zodResolver(postSchema) });
 
-  const onSubmit = async (data) => {
-    await addPost(data);
+  const onSubmit = (data) => {
+    addPost(data);
     reset();
   };
 
@@ -39,6 +37,4 @@ const AddPostForm = () => {
       <button type="submit">Ajouter</button>
     </form>
   );
-};
-
-export default AddPostForm;
+}

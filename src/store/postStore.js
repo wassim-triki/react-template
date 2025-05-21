@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { fetchPosts, createPost, deletePost } from '../services/posts';
 import { persist } from 'zustand/middleware';
 import { postsValidationMiddleware } from './postsValidationMiddleware';
+import { useAuthStore } from './authStore';
 
 // Not using persist here
 // export const usePostStore = create((set, get) => ({
@@ -31,35 +32,43 @@ import { postsValidationMiddleware } from './postsValidationMiddleware';
 export const usePostStore = create(
   postsValidationMiddleware(
     persist(
-      (set, get) => ({
+      (set) => ({
         posts: [],
         errors: '',
 
-        // on load, try server → else leave whatever was rehydrated
         loadPosts: async () => {
           try {
             const data = await fetchPosts();
-            set({ posts: data });
+            set({ posts: data, errors: '' });
           } catch (err) {
-            set({ errors: err });
+            set({ errors: err.message });
           }
         },
 
-        // on add, try server → else generate temp ID
-        addPost: async (post) => {
-          set((state) => ({ posts: [...state.posts, post] }));
+        addPost: (post) => {
+          const withId = { id: Date.now(), ...post };
+          set((s) => ({ posts: [...s.posts, withId] }));
         },
 
-        removePost: async (id) => {
-          set((state) => ({
-            posts: state.posts.filter((p) => p.id !== id),
-          }));
+        removePost: (id) => {
+          set((s) => ({ posts: s.posts.filter((p) => p.id !== id) }));
         },
       }),
       {
-        name: 'post-storage', // localStorage key
-        getStorage: () => localStorage, // could swap to sessionStorage here
+        name: 'post-storage',
+        getStorage: () => localStorage,
+        partialize: (state) => ({ posts: state.posts }),
       }
     )
   )
+);
+
+// only clear on logout
+useAuthStore.subscribe(
+  (s) => s.user,
+  (newUser, oldUser) => {
+    if (!newUser && oldUser) {
+      usePostStore.setState({ posts: [], errors: '' });
+    }
+  }
 );

@@ -2,18 +2,27 @@
 import React, { useEffect } from 'react';
 import AddPostForm from '../components/AddPostForm';
 import { usePostStore } from '../store/postStore';
+import { useAuthStore } from '../store/authStore';
 
-const Posts = () => {
-  const { posts, loadPosts, removePost } = usePostStore();
+export default function Posts() {
+  const user = useAuthStore((s) => s.user);
+  const { posts, loadPosts, removePost, errors } = usePostStore();
 
   useEffect(() => {
-    loadPosts();
-  }, [loadPosts]);
+    // only fetch from the server if we have a logged-in user
+    // AND our cache is currently empty
+    if (user && posts.length === 0) {
+      loadPosts();
+    }
+  }, [user, posts.length, loadPosts]);
 
   return (
     <div>
       <h1>Posts</h1>
+      {errors && <p style={{ color: 'red' }}>{errors}</p>}
+
       <AddPostForm />
+
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
@@ -24,6 +33,4 @@ const Posts = () => {
       </ul>
     </div>
   );
-};
-
-export default Posts;
+}
