@@ -1,38 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { createPost, deletePost, fetchPosts } from '../services/posts';
+// src/pages/Posts.jsx
+import React, { useEffect } from 'react';
 import AddPostForm from '../components/AddPostForm';
+import { usePostStore } from '../store/postStore';
 
 const Posts = () => {
-  const [posts, setPosts] = useState([]);
+  const { posts, loadPosts, removePost } = usePostStore();
 
   useEffect(() => {
-    const getPosts = async () => {
-      const data = await fetchPosts();
-      setPosts(data);
-    };
-    getPosts();
-  }, []);
-
-  const handlePostAdded = async () => {
-    const data = await fetchPosts();
-    setPosts(data);
-  };
-
-  const handleDeletePost = async (id) => {
-    await deletePost(id);
-    const data = await fetchPosts();
-    setPosts(data);
-  };
+    loadPosts();
+  }, [loadPosts]);
 
   return (
     <div>
       <h1>Posts</h1>
-      <AddPostForm onPostAdded={handlePostAdded} />
+      <AddPostForm />
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
             {post.title}{' '}
-            <button onClick={() => handleDeletePost(post.id)}>Supprimer</button>
+            <button onClick={() => removePost(post.id)}>Supprimer</button>
           </li>
         ))}
       </ul>
