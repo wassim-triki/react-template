@@ -7,10 +7,10 @@ function Navbar() {
         Home
       </NavLink>
       <NavLink
-        to="/about"
+        to="/posts"
         className={({ isActive }) => (isActive ? 'active' : '')}
       >
-        About
+        Posts
       </NavLink>
     </nav>
   );

@@ -1,6 +1,14 @@
 {
   "posts": [
-    { "id": 1, "title": "Mon premier post", "content": "Contenu du post" },
-    { "id": 2, "title": "Un autre post", "content": "Encore du contenu" }
+    {
+      "id": "2",
+      "title": "Un autre post",
+      "content": "Encore du contenu"
+    },
+    {
+      "id": "f418",
+      "title": "Nouveau post",
+      "content": "Contenu du nouveau post"
+    }
   ]
 }
